@@ -1,0 +1,17 @@
+﻿  main.c
+  MatrizOG.c
+  posandmov.c
+C:\Users\bstuc\source\repos\PacmanTest\PacmanTest\main.c(8,12): warning C4026: función declarada con lista de parámetros formales
+C:\Users\bstuc\source\repos\PacmanTest\PacmanTest\posandmov.c(60,10): warning C4013: 'intercheck' sin definir; se supone que extern devuelve como resultado int
+C:\Users\bstuc\source\repos\PacmanTest\PacmanTest\posandmov.c(67,33): warning C4244: 'return': conversión de 'double' a 'int'; posible pérdida de datos
+C:\Users\bstuc\source\repos\PacmanTest\PacmanTest\posandmov.c(81,9): warning C4013: 'target' sin definir; se supone que extern devuelve como resultado int
+  Generando código...
+C:\Users\bstuc\source\repos\PacmanTest\PacmanTest\posandmov.c(108,6): error C2371: 'target': nueva definición; tipos básicos distintos
+C:\Users\bstuc\source\repos\PacmanTest\PacmanTest\posandmov.c(114,17): warning C4013: 'tblinky' sin definir; se supone que extern devuelve como resultado int
+C:\Users\bstuc\source\repos\PacmanTest\PacmanTest\posandmov.c(115,17): warning C4013: 'tpinky' sin definir; se supone que extern devuelve como resultado int
+C:\Users\bstuc\source\repos\PacmanTest\PacmanTest\posandmov.c(116,17): warning C4013: 'tinky' sin definir; se supone que extern devuelve como resultado int
+C:\Users\bstuc\source\repos\PacmanTest\PacmanTest\posandmov.c(117,17): warning C4013: 'tclyde' sin definir; se supone que extern devuelve como resultado int
+C:\Users\bstuc\source\repos\PacmanTest\PacmanTest\posandmov.c(123,6): error C2371: 'tblinky': nueva definición; tipos básicos distintos
+C:\Users\bstuc\source\repos\PacmanTest\PacmanTest\posandmov.c(128,6): error C2371: 'tpinky': nueva definición; tipos básicos distintos
+C:\Users\bstuc\source\repos\PacmanTest\PacmanTest\posandmov.c(142,6): error C2371: 'tinky': nueva definición; tipos básicos distintos
+C:\Users\bstuc\source\repos\PacmanTest\PacmanTest\posandmov.c(159,6): error C2371: 'tclyde': nueva definición; tipos básicos distintos
