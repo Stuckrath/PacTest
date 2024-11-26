@@ -28,7 +28,7 @@ int** crearLaberinto(int* ancho, int* altura, char* fp, int* pos) {
     FILE* Laberinto = fopen(fp, "r");
     i = 0; j = 0;
     while ((aux = fgetc(Laberinto)) != EOF)
-    {
+    {   
         switch (aux) {
         case '#': val = -1; break;
         case '0': val = 0; break;

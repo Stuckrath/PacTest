@@ -1,13 +1,14 @@
 #include <SDL.h>
 #include <stdio.h>
 #include "MatrizOG.h"
+#include "posandmov.h"
+#include "timeandinput.h"<
 #define WIDTH 600
 #define HEIGHT 480
 #define esctime 100
-int ancho = 0, altura = 1;
+int ancho = 0, altura = 1, scatter = 0, powerup;
 int main() {
 
-	int pos[10];
 	printf("Ingresar el nombre del archivo .txt a leer (.txt incluido) (Asegurar que se encuentre en la carpeta Laberintos): ");
 	char Arch[96] = "Laberintos\\";
 	char test = getchar();
@@ -17,14 +18,14 @@ int main() {
 		ii++;
 		test = getchar();
 	}
-	int i = 0;
-	printf("Todo bien 1\n");
-	printf("%s \n", Arch);
+	int pos[10];
 	int** Laber = crearLaberinto(&ancho, &altura, Arch, pos);
-	printf("\n %d %d %d\n ", Laber[1][1], ancho, altura);
 	ancho--;
-	int** Intersecciones = crearIntersecciones(Laber,altura,ancho);
-
+	printf("\n %d %d %d\n ", Laber[1][1], ancho, altura);
+	int** Inter = crearIntersecciones(Laber,altura,ancho);
+	int mov[5] = { 0,0,0,0,0 };
+	int tar[10];
+	int dir[5] = { 2,2,2,2,2 };
 
 	if (SDL_Init(SDL_INIT_EVERYTHING) != 0) {
 		printf("SDL_Init Error: %s\n", SDL_GetError()); return 0;
@@ -44,6 +45,7 @@ int main() {
 	SDL_Event event;
 	int quitaux = esctime;
 
+	//Procesar input-> Realizar movimiento de Pacman -> Verificar Game Over -> Realizar movimiento de fantasmas -> Verificar Game Over
 
 	while (quitaux) {
 		// Manejo de eventos
@@ -52,15 +54,7 @@ int main() {
 			if (event.type == SDL_QUIT) {
 				quitaux = 0;
 			}
-			// Evento de teclado
-			else if (event.type == SDL_KEYDOWN) {
-				// Imprimir la tecla presionada
-				printf("Tecla presionada: %s\n",
-					SDL_GetKeyName(event.key.keysym.sym));
-				if (tecla[SDL_SCANCODE_ESCAPE])
-					quitaux--;
-				else quitaux = esctime;
-			}
+
 		}
 	}
 	// Liberar recursos
@@ -69,3 +63,4 @@ int main() {
 	SDL_Quit();
 	return 0;
 }
+

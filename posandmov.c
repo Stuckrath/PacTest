@@ -1,8 +1,8 @@
 #include "posandmov.h"
 int checkmov(int dir, int* P, int** M) {
     int x = *P, y = *(P + 1);
-    switch (dir) {
-    case 1: //up
+    switch (dir) {  
+    case 1: //upx
         if (y <= 0) { //Se revisa primero si el movimiento haria screenwrap o no
             return screenwrap(M,x,altura-1);
         }
@@ -23,15 +23,27 @@ int checkmov(int dir, int* P, int** M) {
         if (M[y][x-1] < 0) return 0;
         return 1;
         break;
+    case 0:
+        return 1;
     }
     printf("Algo sale mal con el check de movimiento X_X \n");
     return -2;
 }
 
 int screenwrap(int** Lab, int x, int y) {
-    if (Lab[y][x] < 0) return 2;
-    else return 0;
-}
+    if (Lab[y][x] < 0) return 0;
+    else return 2;
+}/*
+int wrap2(int** L, int* P, int dir) {
+    int mx=0, my=0;
+    switch (dir) {
+    case 1: my = -1; break;
+    case 2: mx = 1; break;
+    case 3: my = 1; break;
+    case 4: mx = -1; break;
+    }
+    return screenwrap(L, *(P)+mx, *(P + 1) + my);
+}*/
 
 void movact(int mov, int* P, int ov) {
     if (mov == 0) return;
@@ -67,7 +79,7 @@ int distancia(int* P, int* T, int mx, int my) {
     return fabs((*P + mx) - *T) + fabs((*(P + 1) + my) - *(T + 1));
 }
 int intercheck(int dirp, int dira, int* P, int** M, int* T, int mx, int my, int ef, int* dist) {
-    if (checkmov(dira, P, M) != 0 && dira != dirp) {
+    if (checkmov(dira, P, M) == 1 && dira != dirp) {
         if (distancia(P, T, mx, my) < *dist) {
             *dist = distancia(P, T, mx, my); ef = dira;
         }
@@ -75,22 +87,36 @@ int intercheck(int dirp, int dira, int* P, int** M, int* T, int mx, int my, int 
     return ef;
 }
 
-void movfantasma(int obj, int* dir, int* P, int** M, int* T, int** I) { //falta interpretar bien el screenwrap
-    int mov = 0;
+//P, T, dir deben estar apuntando directamente a la casilla del objeto(fantasma) correspondiente
+int movfantasma(int obj, int* dir, int* P, int** M, int* T, int** I, int* movi) {
+    int mov = 0, ov = 0, aux = 0;
     if (I[*P][*(P+1)] == 1) {
-        target(obj, P - 2 * obj, M, T - 2 * obj, dir);
-        mov = interseccion(*dir, P, M, T);
+        target(obj, P - 2 * obj, T - 2 * obj, dir-obj);
+        mov = interseccion(*movi, P, M, T);
     }
     else {
         for (int z = 1; z <= 4; z++) {
-            if (checkmov(z, P, M) >= 0 && z != *dir) { //cuidado que aqui no considerara screenwrap
+            aux = checkmov(z, P, M);
+            if (aux >= 0 && z != noback(*dir)){ 
                 mov = z;
+                if (aux == 2) ov = 1;
                 break;
             }
         }
     }
-    *dir = mov;
-    movact(*dir, P, 0);
+    if (mov > 0) *dir = mov;
+    *movi = mov;
+    return ov;
+} 
+
+int noback(int dir) {
+    switch (dir) {
+        case 1: return 3; break;
+        case 2: return 4; break;
+        case 3: return 1; break;
+        case 4: return 2; break;
+    }
+    return 0;
 }
 
 void tscatter(int obj, int* T) {
@@ -105,27 +131,28 @@ void tscatter(int obj, int* T) {
     return;
 }
 
-void target(int obj, int* P, int* M, int* T, int* dir) {
+void target(int obj, int* P, int* T, int* dir) {
     if (scatter = 1) {
         tscatter(obj, T);
     }
     else {
         switch (obj) {
-        case 1: tblinky(P, M, T); break;
-        case 2: tpinky(P, M, T, dir); break;
-        case 3: tinky(P, M, T, dir); break;
-        case 4: tclyde(P, M, T); break;
+        case 1: tblinky(P,T); break;
+        case 2: tpinky(P, T, dir); break;
+        case 3: tinky(P, T, dir); break;
+        case 4: tclyde(P, T); break;
         }
     }
     return;
 }
-
-void tblinky(int* P, int* M, int* T) {
+//Blinky: Va directamente a la pos. de Pacman
+void tblinky(int* P, int* T) { 
     *(T + 2) = *P;
     *(T + 3) = *(P + 1);
     return;
 }
-void tpinky(int* P, int* M, int* T, int* dir) {
+//Pinky: Va a la casilla 4 casillas en frente de Pacman
+void tpinky(int* P, int* T, int* dir) {
     int mx = 0, my = 0, auxy, auxx;
     switch (*dir) {
     case 1: my = -4; break;
@@ -139,7 +166,8 @@ void tpinky(int* P, int* M, int* T, int* dir) {
     *(T + 5) = auxy;
     return;
 }
-void tinky(int* P, int* M, int* T, int* dir) {
+//Inky: Va a la casilla apuntada por el vector que va desde Blinky a la casilla 2 casillas frente a Pacman; multiplicado por 2 (medio complejo)
+void tinky(int* P, int* T, int* dir) {
     int mx = 0, my =0, xf = 0, yf = 0, xs = 0, ys = 0, vx = 0, vy = 0, auxx, auxy;
     switch (*dir) {
     case 1: my = -2; break;
@@ -156,7 +184,8 @@ void tinky(int* P, int* M, int* T, int* dir) {
     *(T + 6) = auxx;
     *(T + 7) = auxy;
 }
-void tclyde(int* P, int* M, int* T) {
+//Clyde: Va hacia Pacman directamente, a no ser que se encuentre a 8 casillas Manhattan de Pacman, en donde vuelve a "esparcirse"
+void tclyde(int* P, int* T) {
     int d = distancia(P + 8, P, 0, 0);
     if (d > 8) {
         *(T + 8) = *P;
@@ -166,4 +195,10 @@ void tclyde(int* P, int* M, int* T) {
         tscatter(4, T);
     }
     return;
+}
+void pointcheck(int** M, int* points, int x, int y) {
+    if (M[y][x] == 1) {
+        (*points)++;
+        M[y][x] == 0;
+    }
 }
